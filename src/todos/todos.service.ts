@@ -1,45 +1,34 @@
-
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service.js';
 
-export interface Todo {
-  id: number;
-  title: string;
-  done: boolean;
-}
 
 @Injectable()
 export class TodosService {
-  private todos: Todo[] = [
-    { id: 1, title: 'Learn NestJS', done: false },
-    { id: 2, title: 'Learn Next.js', done: true },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll(): Todo[] {
-    return this.todos;
+  findAll() {
+    return this.prisma.todo.findMany({ orderBy: { id: 'asc' } });
   }
 
-  private nextId = 3;
-
-  create(title: string): Todo {
-    const todo: Todo = { id: this.nextId++, title, done: false };
-    this.todos.push(todo);
-    return todo;
+  create(title: string) {
+    return this.prisma.todo.create({ data: { title } });
   }
-  
-  update(id: number, done: boolean): Todo {
-    const todo = this.todos.find((t) => t.id === id);
+
+  async update(id: number, done: boolean) {
+    await this.findOneOrFail(id);
+    return this.prisma.todo.update({ where: { id }, data: { done } });
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.findOneOrFail(id);
+    await this.prisma.todo.delete({ where: { id } });
+  }
+
+  private async findOneOrFail(id: number) {
+    const todo = await this.prisma.todo.findUnique({ where: { id } });
     if (!todo) {
       throw new NotFoundException(`Todo ${id} not found`);
     }
-    todo.done = done;
     return todo;
-  }
-
-  remove(id: number): void {
-    const index = this.todos.findIndex((t) => t.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`Todo ${id} not found`);
-    }
-    this.todos.splice(index, 1);
   }
 }

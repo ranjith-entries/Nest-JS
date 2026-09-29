@@ -4,8 +4,8 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { TodosModule } from './todos/todos.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
-import { TodosController } from './todos/todos.controller.js';
-import { TodosService } from './todos/todos.service.js';
+import { UsersModule } from './users/users.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
@@ -19,8 +19,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: 'YOUR_APP_SECRET',
       serviceId: 'backend',
     }),
+    
     PrismaModule,
     TodosModule,
+    UsersModule,
+    AuthModule,
     
   ],
   controllers: [AppController],

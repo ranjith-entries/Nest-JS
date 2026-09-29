@@ -58,6 +58,12 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Local / tools
+*.db.backup
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
 # Prisma
 *.db
 /src/generated
